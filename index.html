@@ -417,6 +417,31 @@
     }
     .shake { animation: shake .28s ease; }
 
+    /* ── Status bar ─────────────────────────────────────── */
+    .status-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.connecting { background: #f59e0b; animation: pulse 1.2s infinite; }
+    .status-dot.online     { background: #22c55e; }
+    .status-dot.offline    { background: #ef4444; }
+    .status-text { font-size: .78rem; color: var(--text-muted); font-weight: 500; }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .3; }
+    }
+
     /* ── Scrollbar ───────────────────────────────────────── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -431,6 +456,10 @@
     <div class="header-icon">⚽</div>
     <h1>ลงชื่อเตะบอล</h1>
     <p>ลงชื่อสมาชิกสำหรับสัปดาห์นี้</p>
+    <div class="status-bar">
+      <span id="statusDot" class="status-dot connecting"></span>
+      <span id="statusText" class="status-text">กำลังเชื่อมต่อ...</span>
+    </div>
   </div>
 
   <!-- Input card -->
@@ -510,38 +539,73 @@
   </div>
 </div>
 
-<script>
-  const STORAGE_KEY = "football_players";
+<script type="module">
+  // ══════════════════════════════════════════════════════════
+  //  🔧 ใส่ค่า Firebase config ของคุณที่นี่
+  //  console.firebase.google.com → Project Settings → Your apps
+  // ══════════════════════════════════════════════════════════
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, updateDoc, deleteDoc,
+    doc, onSnapshot, serverTimestamp, writeBatch, getDocs, query, orderBy,
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  let players    = load();
+  const firebaseConfig = {
+  	apiKey: "AIzaSyBPoJmfNyZFaMWUBISYFS1p5PoWhSY-be0",
+  authDomain: "paiboon-fc-01.firebaseapp.com",
+  projectId: "paiboon-fc-01",
+  storageBucket: "paiboon-fc-01.firebasestorage.app",
+  messagingSenderId: "1038503573021",
+  appId: "1:1038503573021:web:91974700c39dacfe4c38f4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  const col = collection(db, "players");
+  const q   = query(col, orderBy("createdAt", "asc"));
+
+  // ── State ──────────────────────────────────────────────────
+  let players    = [];  // sync'd from Firestore via onSnapshot
   let editingId  = null;
   let teamResult = null;
 
-  function load() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch { return []; }
-  }
-  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(players)); }
-  function uid()  { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-
+  // ── DOM refs ───────────────────────────────────────────────
   const $ = id => document.getElementById(id);
-  const nameInput    = $("nameInput");
-  const inputError   = $("inputError");
-  const addBtn       = $("addBtn");
-  const editInput    = $("editInput");
-  const saveEditBtn  = $("saveEditBtn");
-  const cancelEditBtn= $("cancelEditBtn");
-  const editModal    = $("editModal");
-  const playerList   = $("playerList");
-  const playerCount  = $("playerCount");
-  const randomBtn    = $("randomBtn");
-  const clearBtn     = $("clearBtn");
-  const teamSection  = $("teamSection");
-  const confirmModal = $("confirmModal");
-  const confirmYes   = $("confirmYes");
-  const confirmNo    = $("confirmNo");
+  const nameInput     = $("nameInput");
+  const inputError    = $("inputError");
+  const editError     = $("editError");
+  const addBtn        = $("addBtn");
+  const editInput     = $("editInput");
+  const saveEditBtn   = $("saveEditBtn");
+  const cancelEditBtn = $("cancelEditBtn");
+  const editModal     = $("editModal");
+  const playerList    = $("playerList");
+  const playerCount   = $("playerCount");
+  const randomBtn     = $("randomBtn");
+  const clearBtn      = $("clearBtn");
+  const teamSection   = $("teamSection");
+  const confirmModal  = $("confirmModal");
+  const confirmYes    = $("confirmYes");
+  const confirmNo     = $("confirmNo");
+  const statusDot     = $("statusDot");
+  const statusText    = $("statusText");
 
-  // ── Render ────────────────────────────────────────────────
+  // ── Real-time listener ─────────────────────────────────────
+  onSnapshot(q,
+    (snapshot) => {
+      players = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setStatus("online");
+      render();
+    },
+    () => setStatus("offline")
+  );
+
+  function setStatus(s) {
+    statusDot.className  = "status-dot " + s;
+    statusText.textContent = s === "online" ? "เชื่อมต่อแล้ว" : "ไม่มีสัญญาณ";
+  }
+
+  // ── Render ─────────────────────────────────────────────────
   function render() {
     playerCount.textContent = players.length;
     randomBtn.disabled = players.length === 0;
@@ -561,33 +625,40 @@
         <span class="player-num">${i + 1}</span>
         <span class="player-name">${esc(p.name)}</span>
         <div class="player-actions">
-          <button class="btn-icon" onclick="startEdit('${p.id}')" title="แก้ไข">✏️</button>
-          <button class="btn-icon" onclick="deletePlayer('${p.id}')" title="ลบ">🗑️</button>
+          <button class="btn-icon" data-action="edit" data-id="${p.id}" title="แก้ไข">✏️</button>
+          <button class="btn-icon" data-action="del"  data-id="${p.id}" title="ลบ">🗑️</button>
         </div>
       </div>`).join("");
   }
 
-  // ── Add ───────────────────────────────────────────────────
-  function addPlayer() {
+  // event delegation แทน inline onclick (ใช้งานได้กับ type="module")
+  playerList.addEventListener("click", e => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    if (btn.dataset.action === "edit") startEdit(btn.dataset.id);
+    if (btn.dataset.action === "del")  deletePlayer(btn.dataset.id);
+  });
+
+  // ── Add ────────────────────────────────────────────────────
+  async function addPlayer() {
     const name = nameInput.value.trim();
     if (!name) { shake(nameInput); showError("กรุณากรอกชื่อก่อนลงชื่อ"); return; }
-    if (isDuplicate(name)) {
-      shake(nameInput);
-      showError(`"${name}" ลงชื่อไปแล้ว`);
-      return;
-    }
+    if (isDuplicate(name)) { shake(nameInput); showError(`"${name}" ลงชื่อไปแล้ว`); return; }
     clearError();
-    players.push({ id: uid(), name });
-    save(); render();
-    nameInput.value = "";
-    nameInput.focus();
+    addBtn.disabled = true;
+    try {
+      await addDoc(col, { name, createdAt: serverTimestamp() });
+      nameInput.value = "";
+      nameInput.focus();
+    } catch { showError("เพิ่มไม่สำเร็จ ลองใหม่อีกครั้ง"); }
+    finally { addBtn.disabled = false; }
   }
 
   addBtn.addEventListener("click", addPlayer);
   nameInput.addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
   nameInput.addEventListener("input", clearError);
 
-  // ── Edit ──────────────────────────────────────────────────
+  // ── Edit ───────────────────────────────────────────────────
   function startEdit(id) {
     const p = players.find(x => x.id === id);
     if (!p) return;
@@ -597,34 +668,35 @@
     setTimeout(() => editInput.focus(), 80);
   }
 
-  saveEditBtn.addEventListener("click", () => {
+  saveEditBtn.addEventListener("click", async () => {
     const name = editInput.value.trim();
     if (!name) { shake(editInput); return; }
     if (isDuplicate(name, editingId)) { shake(editInput); showEditError(`"${name}" ลงชื่อไปแล้ว`); return; }
     clearEditError();
-    const p = players.find(x => x.id === editingId);
-    if (p) { p.name = name; save(); render(); }
-    closeModal(editModal);
+    try {
+      await updateDoc(doc(db, "players", editingId), { name });
+      closeModal(editModal);
+    } catch { showEditError("แก้ไขไม่สำเร็จ ลองใหม่อีกครั้ง"); }
   });
 
   editInput.addEventListener("keydown", e => { if (e.key === "Enter") saveEditBtn.click(); });
   editInput.addEventListener("input", clearEditError);
   cancelEditBtn.addEventListener("click", () => closeModal(editModal));
-  editModal.addEventListener("click",    e => { if (e.target === editModal) closeModal(editModal); });
+  editModal.addEventListener("click", e => { if (e.target === editModal) closeModal(editModal); });
 
   function closeModal(el) { el.classList.remove("open"); editingId = null; clearEditError(); }
 
-  // ── Delete ────────────────────────────────────────────────
-  function deletePlayer(id) {
-    players = players.filter(p => p.id !== id);
-    save(); render();
+  // ── Delete ─────────────────────────────────────────────────
+  async function deletePlayer(id) {
+    try { await deleteDoc(doc(db, "players", id)); }
+    catch { alert("ลบไม่สำเร็จ ลองใหม่อีกครั้ง"); }
   }
 
-  // ── Random teams ──────────────────────────────────────────
+  // ── Random teams ───────────────────────────────────────────
   randomBtn.addEventListener("click", () => {
     if (!players.length) return;
     const shuffled = [...players].sort(() => Math.random() - 0.5);
-    const buckets = [[], [], []];
+    const buckets  = [[], [], []];
     shuffled.forEach((p, i) => buckets[i % 3].push(p.name));
     const order = [0, 1, 2].sort(() => Math.random() - 0.5);
     const [red, yellow, blue] = [buckets[order[0]], buckets[order[1]], buckets[order[2]]];
@@ -645,10 +717,12 @@
           ${teamCard("🔵","BLUE",  "team-blue",   blue)}
         </div>
         <div class="divider"></div>
-        <button class="btn btn-ghost" style="width:100%;font-size:.88rem" onclick="document.getElementById('randomBtn').click()">
+        <button id="reshuffleBtn" class="btn btn-ghost" style="width:100%;font-size:.88rem">
           🔀 สุ่มใหม่อีกครั้ง
         </button>
       </div>`;
+    document.getElementById("reshuffleBtn").addEventListener("click",
+      () => randomBtn.click());
   }
 
   function teamCard(emoji, label, cls, members) {
@@ -661,19 +735,24 @@
       </div>`;
   }
 
-  // ── Clear ─────────────────────────────────────────────────
+  // ── Clear ──────────────────────────────────────────────────
   clearBtn.addEventListener("click", () => confirmModal.classList.add("open"));
-  confirmNo.addEventListener("click",  () => closeModal(confirmModal));
+  confirmNo.addEventListener("click", () => closeModal(confirmModal));
   confirmModal.addEventListener("click", e => { if (e.target === confirmModal) closeModal(confirmModal); });
 
-  confirmYes.addEventListener("click", () => {
-    players = []; teamResult = null;
-    save(); render();
-    teamSection.innerHTML = "";
+  confirmYes.addEventListener("click", async () => {
     closeModal(confirmModal);
+    try {
+      const snap  = await getDocs(col);
+      const batch = writeBatch(db);
+      snap.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+      teamResult = null;
+      teamSection.innerHTML = "";
+    } catch { alert("เคลียไม่สำเร็จ ลองใหม่อีกครั้ง"); }
   });
 
-  // ── Helpers ───────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────
   function isDuplicate(name, excludeId = null) {
     return players.some(p => p.id !== excludeId && p.name.trim().toLowerCase() === name.toLowerCase());
   }
@@ -685,17 +764,10 @@
     clearTimeout(errorTimer);
     errorTimer = setTimeout(clearError, 3000);
   }
-  function clearError() {
-    inputError.classList.remove("show");
-    clearTimeout(errorTimer);
-  }
+  function clearError() { inputError.classList.remove("show"); clearTimeout(errorTimer); }
 
-  const editError = document.getElementById("editError");
-  function showEditError(msg) {
-    editError.textContent = "⚠️ " + msg;
-    editError.classList.add("show");
-  }
-  function clearEditError() { editError.classList.remove("show"); }
+  function showEditError(msg) { editError.textContent = "⚠️ " + msg; editError.classList.add("show"); }
+  function clearEditError()   { editError.classList.remove("show"); }
 
   function esc(s) {
     return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -704,11 +776,6 @@
     el.classList.add("shake");
     el.addEventListener("animationend", () => el.classList.remove("shake"), { once: true });
   }
-
-  window.startEdit    = startEdit;
-  window.deletePlayer = deletePlayer;
-
-  render();
 </script>
 </body>
 </html>
