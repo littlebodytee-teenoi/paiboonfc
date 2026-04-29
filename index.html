@@ -540,24 +540,12 @@
 </div>
 
 <script type="module">
-  // ══════════════════════════════════════════════════════════
-  //  🔧 ใส่ค่า Firebase config ของคุณที่นี่
-  //  console.firebase.google.com → Project Settings → Your apps
-  // ══════════════════════════════════════════════════════════
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, addDoc, updateDoc, deleteDoc,
     doc, onSnapshot, serverTimestamp, writeBatch, getDocs, query, orderBy,
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-  	apiKey: "AIzaSyBPoJmfNyZFaMWUBISYFS1p5PoWhSY-be0",
-  authDomain: "paiboon-fc-01.firebaseapp.com",
-  projectId: "paiboon-fc-01",
-  storageBucket: "paiboon-fc-01.firebasestorage.app",
-  messagingSenderId: "1038503573021",
-  appId: "1:1038503573021:web:91974700c39dacfe4c38f4"
-  };
+  import { firebaseConfig } from "./firebase-config.js";
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
