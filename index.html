@@ -624,12 +624,10 @@
   randomBtn.addEventListener("click", () => {
     if (!players.length) return;
     const shuffled = [...players].sort(() => Math.random() - 0.5);
-    const red = [], yellow = [], blue = [];
-    shuffled.forEach((p, i) => {
-      if      (i % 3 === 0) red.push(p.name);
-      else if (i % 3 === 1) yellow.push(p.name);
-      else                  blue.push(p.name);
-    });
+    const buckets = [[], [], []];
+    shuffled.forEach((p, i) => buckets[i % 3].push(p.name));
+    const order = [0, 1, 2].sort(() => Math.random() - 0.5);
+    const [red, yellow, blue] = [buckets[order[0]], buckets[order[1]], buckets[order[2]]];
     teamResult = { red, yellow, blue };
     renderTeams();
     teamSection.scrollIntoView({ behavior: "smooth" });
