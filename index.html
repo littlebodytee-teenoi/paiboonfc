@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚽ ลงชื่อเตะบอล</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #21262d;
+      --border:    rgba(255,255,255,.08);
+      --border-hi: rgba(255,255,255,.16);
+      --text:      #e6edf3;
+      --text-muted:#7d8590;
+      --green:     #3fb950;
+      --green-dim: #196127;
+      --purple:    #8b5cf6;
+      --purple-dim:#4c1d95;
+      --red:       #f85149;
+      --red-dim:   #6e1c1c;
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: "Kanit", system-ui, sans-serif;
+      font-weight: 400;
+      background: var(--bg);
+      min-height: 100dvh;
+      color: var(--text);
+      padding: 16px;
+      padding-bottom: 32px;
+    }
+
+    /* ── Background mesh ─────────────────────────────────── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(59,130,246,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 90% 110%, rgba(139,92,246,.15) 0%, transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
+
+    /* ── Header ──────────────────────────────────────────── */
+    .app-header {
+      text-align: center;
+      padding: 28px 0 24px;
+    }
+    .header-icon {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 14px;
+      box-shadow: 0 8px 24px rgba(34,197,94,.35);
+    }
+    .app-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .app-header p {
+      color: var(--text-muted);
+      font-size: .88rem;
+      margin-top: 4px;
+      font-weight: 300;
+    }
+
+    /* ── Card ────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Input row ───────────────────────────────────────── */
+    .input-row { display: flex; gap: 8px; }
+
+    .input-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 400;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input-row input::placeholder { color: var(--text-muted); }
+    .input-row input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(63,185,80,.15);
+    }
+
+    /* ── Buttons ─────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 11px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter .15s, transform .1s, opacity .15s;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn:disabled { opacity: .35; cursor: not-allowed; }
+    .btn:not(:disabled):hover { filter: brightness(1.12); }
+
+    .btn-green  {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(34,197,94,.3);
+    }
+    .btn-purple {
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(139,92,246,.3);
+    }
+    .btn-danger {
+      background: var(--surface2);
+      color: var(--red);
+      border: 1px solid rgba(248,81,73,.3);
+    }
+    .btn-danger:not(:disabled):hover {
+      background: rgba(248,81,73,.1);
+      filter: none;
+    }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:not(:disabled):hover {
+      color: var(--text);
+      filter: none;
+      border-color: var(--border-hi);
+    }
+
+    .btn-icon {
+      background: none; border: none;
+      color: var(--text-muted);
+      cursor: pointer; font-size: 1rem;
+      padding: 5px 7px; border-radius: 6px;
+      transition: background .15s, color .15s;
+      line-height: 1;
+    }
+    .btn-icon:hover { background: var(--surface2); color: var(--text); }
+
+    /* ── Section label ───────────────────────────────────── */
+    .section-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Count pill ──────────────────────────────────────── */
+    .count-pill {
+      background: var(--green-dim);
+      color: var(--green);
+      border-radius: 20px;
+      padding: 1px 10px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+
+    /* ── Player list ─────────────────────────────────────── */
+    .player-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      animation: slideIn .18s ease;
+    }
+    .player-item:last-child { border-bottom: none; }
+
+    .player-num {
+      width: 26px; height: 26px;
+      background: var(--surface2);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .player-name {
+      flex: 1;
+      font-size: .97rem;
+      font-weight: 500;
+    }
+    .player-actions { display: flex; gap: 2px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--text-muted);
+      font-size: .9rem;
+      font-weight: 300;
+      line-height: 2;
+    }
+    .empty-icon {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+
+    /* ── Action row ──────────────────────────────────────── */
+    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* ── Team section ────────────────────────────────────── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 10px;
+    }
+    @media (max-width: 400px) { .team-grid { grid-template-columns: 1fr; } }
+
+    .team-card {
+      border-radius: var(--radius-sm);
+      padding: 14px 12px;
+      text-align: center;
+      border: 1px solid;
+    }
+    .team-red    { background: rgba(239,68,68,.08);  border-color: rgba(239,68,68,.25); }
+    .team-yellow { background: rgba(234,179,8,.08);  border-color: rgba(234,179,8,.25); }
+    .team-blue   { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.25); }
+
+    .team-emoji  { font-size: 1.4rem; margin-bottom: 2px; }
+    .team-name   {
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .team-red    .team-name { color: #f87171; }
+    .team-yellow .team-name { color: #facc15; }
+    .team-blue   .team-name { color: #60a5fa; }
+
+    .team-count-badge {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .team-red    .team-count-badge { background: rgba(239,68,68,.18);  color: #f87171; }
+    .team-yellow .team-count-badge { background: rgba(234,179,8,.18);  color: #facc15; }
+    .team-blue   .team-count-badge { background: rgba(59,130,246,.18); color: #60a5fa; }
+
+    .team-members {
+      list-style: none;
+      font-size: .88rem;
+      font-weight: 400;
+      line-height: 1.9;
+      color: var(--text);
+    }
+    .team-members li::before {
+      content: "·  ";
+      color: var(--text-muted);
+    }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+
+    /* ── Modal ───────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    @media (min-width: 480px) {
+      .modal-overlay { align-items: center; padding: 16px; }
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 24px 20px 32px;
+      width: 100%;
+      max-width: 440px;
+      animation: slideUp .22s ease;
+    }
+    @media (min-width: 480px) {
+      .modal-box { border-radius: var(--radius); padding-bottom: 24px; animation: popIn .2s ease; }
+    }
+
+    .modal-handle {
+      width: 36px; height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    @media (min-width: 480px) { .modal-handle { display: none; } }
+
+    .modal-box h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .modal-box input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: .95rem;
+      padding: 11px 14px;
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .modal-box input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(63,185,80,.15);
+    }
+
+    .modal-buttons { display: flex; gap: 8px; }
+    .modal-buttons .btn { flex: 1; }
+
+    .confirm-icon { font-size: 2rem; margin-bottom: 10px; }
+    .confirm-text {
+      color: var(--text-muted);
+      font-size: .9rem;
+      font-weight: 300;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .confirm-text strong { color: var(--red); font-weight: 600; }
+
+    /* ── Animations ──────────────────────────────────────── */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-5px); }
+      40%,80% { transform: translateX(5px); }
+    }
+    .shake { animation: shake .28s ease; }
+
+    /* ── Scrollbar ───────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-icon">⚽</div>
+    <h1>ลงชื่อเตะบอล</h1>
+    <p>ลงชื่อสมาชิกสำหรับสัปดาห์นี้</p>
+  </div>
+
+  <!-- Input card -->
+  <div class="card">
+    <div class="input-row">
+      <input id="nameInput" type="text" placeholder="กรอกชื่อของคุณ..." maxlength="40" />
+      <button id="addBtn" class="btn btn-green">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        ลงชื่อ
+      </button>
+    </div>
+  </div>
+
+  <!-- Player list card -->
+  <div class="card">
+    <div class="section-label">
+      ผู้เล่น
+      <span class="count-pill" id="playerCount">0</span>
+      คน
+    </div>
+    <div id="playerList">
+      <div class="empty-state">
+        <div class="empty-icon">🏃</div>
+        ยังไม่มีใครลงชื่อ<br/>เป็นคนแรกสิ!
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions card -->
+  <div class="card">
+    <div class="action-row">
+      <button id="randomBtn" class="btn btn-purple" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        สุ่มแบ่งทีม
+      </button>
+      <button id="clearBtn" class="btn btn-danger" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        เคลียรายชื่อ
+      </button>
+    </div>
+  </div>
+
+  <!-- Team result -->
+  <div id="teamSection"></div>
+
+</div><!-- /wrap -->
+
+<!-- Edit modal -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <h3>✏️ แก้ไขชื่อ</h3>
+    <input id="editInput" type="text" maxlength="40" />
+    <div class="modal-buttons">
+      <button id="cancelEditBtn" class="btn btn-ghost">ยกเลิก</button>
+      <button id="saveEditBtn"   class="btn btn-green">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm clear modal -->
+<div id="confirmModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="confirm-icon">🗑️</div>
+    <h3>เคลียข้อมูลสัปดาห์นี้?</h3>
+    <p class="confirm-text">
+      รายชื่อทั้งหมดจะถูกลบออก<br/>
+      <strong>ไม่สามารถกู้คืนได้</strong>
+    </p>
+    <div class="modal-buttons">
+      <button id="confirmNo"  class="btn btn-ghost">ยกเลิก</button>
+      <button id="confirmYes" class="btn btn-danger">ยืนยัน ลบเลย</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = "football_players";
+
+  let players    = load();
+  let editingId  = null;
+  let teamResult = null;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(players)); }
+  function uid()  { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+  const $ = id => document.getElementById(id);
+  const nameInput    = $("nameInput");
+  const addBtn       = $("addBtn");
+  const editInput    = $("editInput");
+  const saveEditBtn  = $("saveEditBtn");
+  const cancelEditBtn= $("cancelEditBtn");
+  const editModal    = $("editModal");
+  const playerList   = $("playerList");
+  const playerCount  = $("playerCount");
+  const randomBtn    = $("randomBtn");
+  const clearBtn     = $("clearBtn");
+  const teamSection  = $("teamSection");
+  const confirmModal = $("confirmModal");
+  const confirmYes   = $("confirmYes");
+  const confirmNo    = $("confirmNo");
+
+  // ── Render ────────────────────────────────────────────────
+  function render() {
+    playerCount.textContent = players.length;
+    randomBtn.disabled = players.length === 0;
+    clearBtn.disabled  = players.length === 0;
+
+    if (players.length === 0) {
+      playerList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🏃</div>
+          ยังไม่มีใครลงชื่อ<br/>เป็นคนแรกสิ!
+        </div>`;
+      return;
+    }
+
+    playerList.innerHTML = players.map((p, i) => `
+      <div class="player-item">
+        <span class="player-num">${i + 1}</span>
+        <span class="player-name">${esc(p.name)}</span>
+        <div class="player-actions">
+          <button class="btn-icon" onclick="startEdit('${p.id}')" title="แก้ไข">✏️</button>
+          <button class="btn-icon" onclick="deletePlayer('${p.id}')" title="ลบ">🗑️</button>
+        </div>
+      </div>`).join("");
+  }
+
+  // ── Add ───────────────────────────────────────────────────
+  function addPlayer() {
+    const name = nameInput.value.trim();
+    if (!name) { shake(nameInput); return; }
+    players.push({ id: uid(), name });
+    save(); render();
+    nameInput.value = "";
+    nameInput.focus();
+  }
+
+  addBtn.addEventListener("click", addPlayer);
+  nameInput.addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+
+  // ── Edit ──────────────────────────────────────────────────
+  function startEdit(id) {
+    const p = players.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    editInput.value = p.name;
+    editModal.classList.add("open");
+    setTimeout(() => editInput.focus(), 80);
+  }
+
+  saveEditBtn.addEventListener("click", () => {
+    const name = editInput.value.trim();
+    if (!name) { shake(editInput); return; }
+    const p = players.find(x => x.id === editingId);
+    if (p) { p.name = name; save(); render(); }
+    closeModal(editModal);
+  });
+
+  editInput.addEventListener("keydown", e => { if (e.key === "Enter") saveEditBtn.click(); });
+  cancelEditBtn.addEventListener("click", () => closeModal(editModal));
+  editModal.addEventListener("click",    e => { if (e.target === editModal) closeModal(editModal); });
+
+  function closeModal(el) { el.classList.remove("open"); editingId = null; }
+
+  // ── Delete ────────────────────────────────────────────────
+  function deletePlayer(id) {
+    players = players.filter(p => p.id !== id);
+    save(); render();
+  }
+
+  // ── Random teams ──────────────────────────────────────────
+  randomBtn.addEventListener("click", () => {
+    if (!players.length) return;
+    const shuffled = [...players].sort(() => Math.random() - 0.5);
+    const red = [], yellow = [], blue = [];
+    shuffled.forEach((p, i) => {
+      if      (i % 3 === 0) red.push(p.name);
+      else if (i % 3 === 1) yellow.push(p.name);
+      else                  blue.push(p.name);
+    });
+    teamResult = { red, yellow, blue };
+    renderTeams();
+    teamSection.scrollIntoView({ behavior: "smooth" });
+  });
+
+  function renderTeams() {
+    if (!teamResult) { teamSection.innerHTML = ""; return; }
+    const { red, yellow, blue } = teamResult;
+    teamSection.innerHTML = `
+      <div class="card">
+        <div class="section-label">ผลการแบ่งทีม</div>
+        <div class="team-grid">
+          ${teamCard("🔴","RED",   "team-red",    red)}
+          ${teamCard("🟡","YELLOW","team-yellow", yellow)}
+          ${teamCard("🔵","BLUE",  "team-blue",   blue)}
+        </div>
+        <div class="divider"></div>
+        <button class="btn btn-ghost" style="width:100%;font-size:.88rem" onclick="document.getElementById('randomBtn').click()">
+          🔀 สุ่มใหม่อีกครั้ง
+        </button>
+      </div>`;
+  }
+
+  function teamCard(emoji, label, cls, members) {
+    return `
+      <div class="team-card ${cls}">
+        <div class="team-emoji">${emoji}</div>
+        <div class="team-name">${label}</div>
+        <span class="team-count-badge">${members.length} คน</span>
+        <ul class="team-members">${members.map(n => `<li>${esc(n)}</li>`).join("")}</ul>
+      </div>`;
+  }
+
+  // ── Clear ─────────────────────────────────────────────────
+  clearBtn.addEventListener("click", () => confirmModal.classList.add("open"));
+  confirmNo.addEventListener("click",  () => closeModal(confirmModal));
+  confirmModal.addEventListener("click", e => { if (e.target === confirmModal) closeModal(confirmModal); });
+
+  confirmYes.addEventListener("click", () => {
+    players = []; teamResult = null;
+    save(); render();
+    teamSection.innerHTML = "";
+    closeModal(confirmModal);
+  });
+
+  // ── Helpers ───────────────────────────────────────────────
+  function esc(s) {
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function shake(el) {
+    el.classList.add("shake");
+    el.addEventListener("animationend", () => el.classList.remove("shake"), { once: true });
+  }
+
+  window.startEdit    = startEdit;
+  window.deletePlayer = deletePlayer;
+
+  render();
+</script>
+</body>
+</html>
