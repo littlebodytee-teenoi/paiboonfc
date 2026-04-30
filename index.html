@@ -318,6 +318,13 @@
     .status-dot.offline    { background: #ef4444; }
     .status-text { font-size: .78rem; color: var(--text-muted); font-weight: 500; }
 
+    .version-tag {
+      margin-top: 6px; font-size: .68rem; color: var(--text-muted);
+      font-weight: 400; font-family: "SFMono-Regular", Consolas, monospace;
+      opacity: .55; letter-spacing: .02em;
+    }
+    .version-hash { opacity: .7; }
+
     /* ── Animations ──────────────────────────────────────── */
     @keyframes slideIn  { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
     @keyframes slideUp  { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
@@ -342,6 +349,7 @@
       <span id="statusDot" class="status-dot connecting"></span>
       <span id="statusText" class="status-text">กำลังเชื่อมต่อ...</span>
     </div>
+    <div class="version-tag">v1.0.0<span class="version-hash">#b633e55</span></div>
   </div>
 
   <!-- Input card -->
