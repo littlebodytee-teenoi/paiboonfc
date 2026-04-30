@@ -19,11 +19,7 @@
       --text:      #111827;
       --text-muted:#6b7280;
       --green:     #16a34a;
-      --green-dim: #dcfce7;
-      --purple:    #7c3aed;
-      --purple-dim:#ede9fe;
       --red:       #dc2626;
-      --red-dim:   #fef2f2;
       --radius:    12px;
       --radius-sm: 8px;
     }
@@ -35,414 +31,301 @@
       min-height: 100dvh;
       color: var(--text);
       padding: 16px;
-      padding-bottom: 32px;
+      padding-bottom: 40px;
     }
 
-    /* ── Background mesh ─────────────────────────────────── */
     body::before {
       content: "";
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background:
         radial-gradient(ellipse 80% 50% at 10% -10%, rgba(34,197,94,.10) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 90% 110%, rgba(139,92,246,.08) 0%, transparent 55%);
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
     .wrap { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
 
     /* ── Header ──────────────────────────────────────────── */
-    .app-header {
-      text-align: center;
-      padding: 28px 0 24px;
-    }
+    .app-header { text-align: center; padding: 28px 0 24px; }
     .header-icon {
       width: 60px; height: 60px;
       background: linear-gradient(135deg, #22c55e, #16a34a);
       border-radius: 18px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem;
-      margin: 0 auto 14px;
+      font-size: 1.8rem; margin: 0 auto 14px;
       box-shadow: 0 8px 24px rgba(34,197,94,.35);
     }
-    .app-header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: .3px;
-    }
-    .app-header p {
-      color: var(--text-muted);
-      font-size: .88rem;
-      margin-top: 4px;
-      font-weight: 300;
-    }
+    .app-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: .3px; }
+    .app-header p  { color: var(--text-muted); font-size: .88rem; margin-top: 4px; font-weight: 300; }
 
     /* ── Card ────────────────────────────────────────────── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 12px;
+      padding: 18px; margin-bottom: 12px;
       box-shadow: 0 1px 4px rgba(0,0,0,.06);
     }
 
-    /* ── Input row ───────────────────────────────────────── */
+    /* ── Input ───────────────────────────────────────────── */
     .input-row { display: flex; gap: 8px; }
-
     .input-row input {
-      flex: 1;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: inherit;
-      font-size: .95rem;
-      font-weight: 400;
-      padding: 11px 14px;
-      outline: none;
+      flex: 1; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-family: inherit; font-size: .95rem;
+      padding: 11px 14px; outline: none;
       transition: border-color .2s, box-shadow .2s;
     }
     .input-row input::placeholder { color: var(--text-muted); }
-    .input-row input:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(63,185,80,.15);
+    .input-row input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(63,185,80,.15); }
+
+    .input-error {
+      font-size: .83rem; font-weight: 500; color: #dc2626;
+      max-height: 0; overflow: hidden; opacity: 0;
+      transition: max-height .2s, margin-top .2s, opacity .2s;
     }
+    .input-error.show { max-height: 40px; margin-top: 8px; opacity: 1; }
 
     /* ── Buttons ─────────────────────────────────────────── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 11px 16px;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: .95rem;
-      font-weight: 600;
-      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 11px 16px; border: none;
+      border-radius: var(--radius-sm); font-family: inherit;
+      font-size: .95rem; font-weight: 600; cursor: pointer;
       transition: filter .15s, transform .1s, opacity .15s;
       white-space: nowrap;
     }
-    .btn:active { transform: scale(.97); }
+    .btn:active  { transform: scale(.97); }
     .btn:disabled { opacity: .35; cursor: not-allowed; }
-    .btn:not(:disabled):hover { filter: brightness(1.12); }
+    .btn:not(:disabled):hover { filter: brightness(1.1); }
 
-    .btn-green  {
-      background: linear-gradient(135deg, #22c55e, #15803d);
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(22,163,74,.25);
-    }
-    .btn-purple {
-      background: linear-gradient(135deg, #a78bfa, #6d28d9);
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(124,58,237,.25);
-    }
-    .btn-danger {
-      background: var(--surface2);
-      color: var(--red);
-      border: 1px solid rgba(220,38,38,.2);
-    }
-    .btn-danger:not(:disabled):hover {
-      background: #fef2f2;
-      filter: none;
-    }
-    .btn-ghost {
-      background: var(--surface2);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:not(:disabled):hover {
-      color: var(--text);
-      filter: none;
-      border-color: var(--border-hi);
-    }
+    .btn-green  { background: linear-gradient(135deg,#22c55e,#15803d); color:#fff; box-shadow:0 2px 10px rgba(22,163,74,.25); }
+    .btn-purple { background: linear-gradient(135deg,#a78bfa,#6d28d9); color:#fff; box-shadow:0 2px 10px rgba(124,58,237,.25); }
+    .btn-danger { background: var(--surface2); color: var(--red); border: 1px solid rgba(220,38,38,.2); }
+    .btn-danger:not(:disabled):hover { background: #fef2f2; filter: none; }
+    .btn-ghost  { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:not(:disabled):hover  { color: var(--text); filter: none; border-color: var(--border-hi); }
 
     .btn-icon {
-      background: none; border: none;
-      color: var(--text-muted);
-      cursor: pointer; font-size: 1rem;
-      padding: 5px 7px; border-radius: 6px;
-      transition: background .15s, color .15s;
-      line-height: 1;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; padding: 5px 7px;
+      border-radius: 6px; transition: background .15s, color .15s; line-height: 1;
     }
     .btn-icon:hover { background: var(--surface2); color: var(--text); }
 
-    /* ── Input error ─────────────────────────────────────── */
-    .input-error {
-      font-size: .83rem;
-      font-weight: 500;
-      color: #dc2626;
-      min-height: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .2s ease, margin-top .2s ease, opacity .2s ease;
-      opacity: 0;
-    }
-    .input-error.show {
-      max-height: 40px;
-      margin-top: 8px;
-      opacity: 1;
-    }
-
     /* ── Section label ───────────────────────────────────── */
     .section-label {
-      font-size: .75rem;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: .75rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
     }
-    .section-label::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .section-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
-    /* ── Count pill ──────────────────────────────────────── */
     .count-pill {
-      background: #dcfce7;
-      color: #15803d;
-      border-radius: 20px;
-      padding: 1px 10px;
-      font-size: .78rem;
-      font-weight: 700;
-      letter-spacing: .03em;
+      background: #dcfce7; color: #15803d; border-radius: 20px;
+      padding: 1px 10px; font-size: .78rem; font-weight: 700;
     }
 
     /* ── Player list ─────────────────────────────────────── */
     .player-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 0;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
       animation: slideIn .18s ease;
+      position: relative;
     }
     .player-item:last-child { border-bottom: none; }
 
     .player-num {
-      width: 26px; height: 26px;
-      background: var(--surface2);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .78rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-    .player-name {
-      flex: 1;
-      font-size: .97rem;
-      font-weight: 500;
-    }
-    .player-actions { display: flex; gap: 2px; }
-
-    .empty-state {
-      text-align: center;
-      padding: 32px 0;
-      color: var(--text-muted);
-      font-size: .9rem;
-      font-weight: 300;
-      line-height: 2;
-    }
-    .empty-icon {
-      font-size: 2rem;
-      margin-bottom: 6px;
+      width: 26px; height: 26px; background: var(--surface2);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; font-weight: 700; color: var(--text-muted); flex-shrink: 0;
     }
 
-    /* ── Action row ──────────────────────────────────────── */
-    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .player-name { flex: 1; font-size: .97rem; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-actions { display: flex; gap: 2px; flex-shrink: 0; }
 
-    /* ── Team section ────────────────────────────────────── */
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 10px;
+    /* ── Group chip ──────────────────────────────────────── */
+    .group-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .72rem; font-weight: 700;
+      padding: 2px 6px 2px 8px; border-radius: 20px;
+      border: 1px solid; flex-shrink: 0;
+      letter-spacing: .03em;
     }
-    @media (max-width: 400px) { .team-grid { grid-template-columns: 1fr; } }
+    .group-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .group-chip-x {
+      background: none; border: none; cursor: pointer;
+      color: inherit; font-size: .68rem; line-height: 1;
+      padding: 0 1px; opacity: .6; border-radius: 3px;
+      transition: opacity .15s;
+    }
+    .group-chip-x:hover { opacity: 1; }
 
-    .team-card {
+    /* [NEW] Per-player group assign button */
+    .btn-group-assign {
+      font-size: .7rem; font-weight: 600; padding: 2px 7px;
+      border: 1px dashed var(--border-hi); border-radius: 20px;
+      background: none; color: var(--text-muted);
+      cursor: pointer; font-family: inherit; flex-shrink: 0;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap; line-height: 1.6;
+    }
+    .btn-group-assign:hover {
+      background: #f0fdfa; color: #0d9488;
+      border-color: #5eead4; border-style: solid;
+    }
+
+    /* [NEW] Group picker dropdown */
+    .group-picker {
+      position: absolute; right: 0; top: calc(100% + 2px); z-index: 60;
+      background: var(--surface); border: 1px solid var(--border-hi);
       border-radius: var(--radius-sm);
-      padding: 14px 12px;
-      text-align: center;
-      border: 1px solid;
+      box-shadow: 0 8px 24px rgba(0,0,0,.14);
+      min-width: 186px; overflow: hidden;
+      animation: popIn .15s ease;
     }
+    .picker-header {
+      font-size: .7rem; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 8px 13px 5px;
+    }
+    .picker-option {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 9px 13px; border: none; background: none;
+      font-family: inherit; font-size: .88rem; font-weight: 500;
+      color: var(--text); cursor: pointer; text-align: left;
+      transition: background .12s;
+    }
+    .picker-option:hover { background: var(--surface2); }
+    .picker-divider { height: 1px; background: var(--border); margin: 3px 0; }
+    .picker-create { color: #0d9488; font-weight: 600; }
+    .picker-empty { padding: 8px 13px; font-size: .82rem; color: var(--text-muted); }
+
+    /* ── Group summary row ───────────────────────────────── */
+    .group-summary-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .group-summary-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .78rem; font-weight: 600;
+      background: #f0fdfa; border: 1px solid #99f6e4;
+      color: #0d9488; border-radius: 20px; padding: 3px 10px;
+    }
+
+    /* ── Empty ───────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 32px 0; color: var(--text-muted); font-size: .9rem; font-weight: 300; line-height: 2; }
+    .empty-icon  { font-size: 2rem; margin-bottom: 6px; }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+    /* [MODIFIED] Team section — single-column cards for group-aware display */
+    .team-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+    .team-card { border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid; }
     .team-red    { background: #fff5f5; border-color: #fecaca; }
     .team-yellow { background: #fefce8; border-color: #fde68a; }
     .team-blue   { background: #eff6ff; border-color: #bfdbfe; }
 
-    .team-emoji  { font-size: 1.4rem; margin-bottom: 2px; }
-    .team-name   {
-      font-size: .82rem;
-      font-weight: 700;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
+    /* [MODIFIED] Team card header row */
+    .team-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .team-emoji { font-size: 1.25rem; line-height: 1; }
+    .team-name  { font-size: .92rem; font-weight: 700; }
     .team-red    .team-name { color: #dc2626; }
     .team-yellow .team-name { color: #b45309; }
     .team-blue   .team-name { color: #1d4ed8; }
 
     .team-count-badge {
-      display: inline-block;
-      font-size: .7rem;
-      font-weight: 600;
-      padding: 1px 8px;
-      border-radius: 20px;
-      margin-bottom: 10px;
+      margin-left: auto;
+      display: inline-block; font-size: .7rem; font-weight: 600;
+      padding: 1px 8px; border-radius: 20px;
     }
     .team-red    .team-count-badge { background: #fee2e2; color: #dc2626; }
     .team-yellow .team-count-badge { background: #fef3c7; color: #b45309; }
     .team-blue   .team-count-badge { background: #dbeafe; color: #1d4ed8; }
 
-    .team-members {
-      list-style: none;
+    /* [MODIFIED] Team member rows */
+    .team-members { list-style: none; }
+    .team-members li {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0; border-bottom: 1px solid var(--border);
       font-size: .88rem;
-      font-weight: 400;
-      line-height: 1.9;
-      color: var(--text);
     }
-    .team-members li::before {
-      content: "·  ";
-      color: var(--text-muted);
+    .team-members li:last-child { border-bottom: none; }
+    .unit-names { flex: 1; font-weight: 500; }
+
+    /* [NEW] Group label tag inside team card */
+    .team-group-tag {
+      font-size: .67rem; font-weight: 700; flex-shrink: 0;
+      padding: 1px 7px; border-radius: 10px;
+      border: 1px solid currentColor; opacity: .85; white-space: nowrap;
+    }
+    .team-group-tag.no-group {
+      color: var(--text-muted); border-color: var(--border-hi); font-weight: 400;
     }
 
-    /* ── Divider ─────────────────────────────────────────── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 14px 0;
+    /* [NEW] Warning banner above teams */
+    .team-warning {
+      background: #fef3c7; border: 1px solid #fde68a;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px; font-size: .85rem; font-weight: 500;
+      color: #92400e; margin-bottom: 12px; line-height: 1.5;
     }
 
     /* ── Modal ───────────────────────────────────────────── */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.4);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 100;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 0;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.4); backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px); z-index: 100;
+      align-items: flex-end; justify-content: center; padding: 0;
     }
-    @media (min-width: 480px) {
-      .modal-overlay { align-items: center; padding: 16px; }
-    }
+    @media (min-width: 480px) { .modal-overlay { align-items: center; padding: 16px; } }
     .modal-overlay.open { display: flex; }
 
     .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border-hi);
+      background: var(--surface); border: 1px solid var(--border-hi);
       border-radius: var(--radius) var(--radius) 0 0;
-      padding: 24px 20px 32px;
-      width: 100%;
-      max-width: 440px;
+      padding: 24px 20px 32px; width: 100%; max-width: 440px;
       animation: slideUp .22s ease;
     }
-    @media (min-width: 480px) {
-      .modal-box { border-radius: var(--radius); padding-bottom: 24px; animation: popIn .2s ease; }
-    }
+    @media (min-width: 480px) { .modal-box { border-radius: var(--radius); padding-bottom: 24px; animation: popIn .2s ease; } }
 
-    .modal-handle {
-      width: 36px; height: 4px;
-      background: var(--surface2);
-      border-radius: 2px;
-      margin: 0 auto 20px;
-    }
+    .modal-handle { width: 36px; height: 4px; background: var(--surface2); border-radius: 2px; margin: 0 auto 20px; }
     @media (min-width: 480px) { .modal-handle { display: none; } }
 
-    .modal-box h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
+    .modal-box h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; }
     .modal-box input {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: inherit;
-      font-size: .95rem;
-      padding: 11px 14px;
-      outline: none;
-      margin-bottom: 14px;
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text); font-family: inherit;
+      font-size: .95rem; padding: 11px 14px; outline: none; margin-bottom: 14px;
       transition: border-color .2s, box-shadow .2s;
     }
-    .modal-box input:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(63,185,80,.15);
-    }
-
+    .modal-box input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(63,185,80,.15); }
     .modal-buttons { display: flex; gap: 8px; }
     .modal-buttons .btn { flex: 1; }
 
-    .confirm-icon { font-size: 2rem; margin-bottom: 10px; }
-    .confirm-text {
-      color: var(--text-muted);
-      font-size: .9rem;
-      font-weight: 300;
-      line-height: 1.7;
-      margin-bottom: 18px;
-    }
+    .confirm-icon  { font-size: 2rem; margin-bottom: 10px; }
+    .confirm-text  { color: var(--text-muted); font-size: .9rem; font-weight: 300; line-height: 1.7; margin-bottom: 18px; }
     .confirm-text strong { color: var(--red); font-weight: 600; }
 
-    /* ── Animations ──────────────────────────────────────── */
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(.95); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%,60% { transform: translateX(-5px); }
-      40%,80% { transform: translateX(5px); }
-    }
-    .shake { animation: shake .28s ease; }
-
-    /* ── Status bar ─────────────────────────────────────── */
+    /* ── Status ──────────────────────────────────────────── */
     .status-bar {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 10px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px;
     }
-    .status-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .status-dot.connecting { background: #f59e0b; animation: pulse 1.2s infinite; }
     .status-dot.online     { background: #22c55e; }
     .status-dot.offline    { background: #ef4444; }
     .status-text { font-size: .78rem; color: var(--text-muted); font-weight: 500; }
-    @keyframes pulse {
-      0%,100% { opacity: 1; }
-      50%      { opacity: .3; }
-    }
 
-    /* ── Scrollbar ───────────────────────────────────────── */
+    /* ── Animations ──────────────────────────────────────── */
+    @keyframes slideIn  { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideUp  { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn    { from { opacity:0; transform:scale(.95); }       to { opacity:1; transform:scale(1); } }
+    @keyframes shake    { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .shake { animation: shake .28s ease; }
+
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
@@ -451,7 +334,6 @@
 <body>
 <div class="wrap">
 
-  <!-- Header -->
   <div class="app-header">
     <div class="header-icon">⚽</div>
     <h1>ลงชื่อเตะบอล</h1>
@@ -476,37 +358,34 @@
 
   <!-- Player list card -->
   <div class="card">
+    <div id="groupSummaryRow"></div>
     <div class="section-label">
       ผู้เล่น
       <span class="count-pill" id="playerCount">0</span>
       คน
     </div>
     <div id="playerList">
-      <div class="empty-state">
-        <div class="empty-icon">🏃</div>
-        ยังไม่มีใครลงชื่อ<br/>เป็นคนแรกสิ!
-      </div>
+      <div class="empty-state"><div class="empty-icon">🏃</div>ยังไม่มีใครลงชื่อ<br/>เป็นคนแรกสิ!</div>
     </div>
   </div>
 
-  <!-- Actions card -->
+  <!-- [MODIFIED] Actions card — removed "จับกลุ่ม" button, grouping is now per-player -->
   <div class="card">
-    <div class="action-row">
-      <button id="randomBtn" class="btn btn-purple" disabled>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-        สุ่มแบ่งทีม
-      </button>
-      <button id="clearBtn" class="btn btn-danger" disabled>
+    <button id="randomBtn" class="btn btn-purple" style="width:100%" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+      สุ่มแบ่งทีม
+    </button>
+    <div style="margin-top:8px">
+      <button id="clearBtn" class="btn btn-danger" style="width:100%" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-        เคลียรายชื่อ
+        เคลียรายชื่อ (จบสัปดาห์)
       </button>
     </div>
   </div>
 
-  <!-- Team result -->
   <div id="teamSection"></div>
 
-</div><!-- /wrap -->
+</div>
 
 <!-- Edit modal -->
 <div id="editModal" class="modal-overlay">
@@ -528,10 +407,8 @@
     <div class="modal-handle"></div>
     <div class="confirm-icon">🗑️</div>
     <h3>เคลียข้อมูลสัปดาห์นี้?</h3>
-    <p class="confirm-text">
-      รายชื่อทั้งหมดจะถูกลบออก<br/>
-      <strong>ไม่สามารถกู้คืนได้</strong>
-    </p>
+    <!-- [MODIFIED] Updated text to mention groups are also cleared -->
+    <p class="confirm-text">รายชื่อและข้อมูลกลุ่มทั้งหมดจะถูกลบออก<br/><strong>ไม่สามารถกู้คืนได้</strong></p>
     <div class="modal-buttons">
       <button id="confirmNo"  class="btn btn-ghost">ยกเลิก</button>
       <button id="confirmYes" class="btn btn-danger">ยืนยัน ลบเลย</button>
@@ -547,49 +424,67 @@
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-  const col = collection(db, "players");
-  const q   = query(col, orderBy("createdAt", "asc"));
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const col  = collection(db, "players");
+  const colG = collection(db, "groups");
+  const q    = query(col, orderBy("createdAt", "asc"));
+
+  // ── Group color palette ────────────────────────────────────
+  const COLORS = [
+    { dot:'#f97316', bg:'#fff7ed', border:'#fed7aa', label:'A' },
+    { dot:'#d946ef', bg:'#fdf4ff', border:'#e9d5ff', label:'B' },
+    { dot:'#14b8a6', bg:'#f0fdfa', border:'#99f6e4', label:'C' },
+    { dot:'#6366f1', bg:'#eef2ff', border:'#c7d2fe', label:'D' },
+    { dot:'#f43f5e', bg:'#fff1f2', border:'#fecdd3', label:'E' },
+  ];
 
   // ── State ──────────────────────────────────────────────────
-  let players    = [];  // sync'd from Firestore via onSnapshot
-  let editingId  = null;
-  let teamResult = null;
+  let players             = [];
+  let editingId           = null;
+  let teamResult          = null;
+  let groups              = [];
+  let groupPickerPlayerId = null; // [NEW] player whose picker is open
 
-  // ── DOM refs ───────────────────────────────────────────────
+  // ── DOM ────────────────────────────────────────────────────
   const $ = id => document.getElementById(id);
-  const nameInput     = $("nameInput");
-  const inputError    = $("inputError");
-  const editError     = $("editError");
-  const addBtn        = $("addBtn");
-  const editInput     = $("editInput");
-  const saveEditBtn   = $("saveEditBtn");
-  const cancelEditBtn = $("cancelEditBtn");
-  const editModal     = $("editModal");
-  const playerList    = $("playerList");
-  const playerCount   = $("playerCount");
-  const randomBtn     = $("randomBtn");
-  const clearBtn      = $("clearBtn");
-  const teamSection   = $("teamSection");
-  const confirmModal  = $("confirmModal");
-  const confirmYes    = $("confirmYes");
-  const confirmNo     = $("confirmNo");
-  const statusDot     = $("statusDot");
-  const statusText    = $("statusText");
+  const nameInput       = $("nameInput");
+  const inputError      = $("inputError");
+  const editError       = $("editError");
+  const addBtn          = $("addBtn");
+  const editInput       = $("editInput");
+  const saveEditBtn     = $("saveEditBtn");
+  const cancelEditBtn   = $("cancelEditBtn");
+  const editModal       = $("editModal");
+  const playerList      = $("playerList");
+  const groupSummaryRow = $("groupSummaryRow");
+  const playerCount     = $("playerCount");
+  const randomBtn       = $("randomBtn");
+  const clearBtn        = $("clearBtn");
+  const teamSection     = $("teamSection");
+  const confirmModal    = $("confirmModal");
+  const confirmYes      = $("confirmYes");
+  const confirmNo       = $("confirmNo");
+  const statusDot       = $("statusDot");
+  const statusText      = $("statusText");
 
-  // ── Real-time listener ─────────────────────────────────────
+  // ── Real-time listeners ────────────────────────────────────
   onSnapshot(q,
-    (snapshot) => {
-      players = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    snap => {
+      players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setStatus("online");
       render();
     },
     () => setStatus("offline")
   );
 
+  onSnapshot(colG, snap => {
+    groups = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    render();
+  });
+
   function setStatus(s) {
-    statusDot.className  = "status-dot " + s;
+    statusDot.className    = "status-dot " + s;
     statusText.textContent = s === "online" ? "เชื่อมต่อแล้ว" : "ไม่มีสัญญาณ";
   }
 
@@ -600,32 +495,175 @@
     clearBtn.disabled  = players.length === 0;
 
     if (players.length === 0) {
-      playerList.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">🏃</div>
-          ยังไม่มีใครลงชื่อ<br/>เป็นคนแรกสิ!
-        </div>`;
+      playerList.innerHTML = `<div class="empty-state"><div class="empty-icon">🏃</div>ยังไม่มีใครลงชื่อ<br/>เป็นคนแรกสิ!</div>`;
+      groupSummaryRow.innerHTML = "";
       return;
     }
 
-    playerList.innerHTML = players.map((p, i) => `
-      <div class="player-item">
-        <span class="player-num">${i + 1}</span>
-        <span class="player-name">${esc(p.name)}</span>
-        <div class="player-actions">
-          <button class="btn-icon" data-action="edit" data-id="${p.id}" title="แก้ไข">✏️</button>
-          <button class="btn-icon" data-action="del"  data-id="${p.id}" title="ลบ">🗑️</button>
-        </div>
-      </div>`).join("");
+    const playerGroup = {};
+    groups.forEach(g => g.playerIds.forEach(id => { playerGroup[id] = g; }));
+
+    renderGroupSummary();
+    renderPlayerList(playerGroup);
   }
 
-  // event delegation แทน inline onclick (ใช้งานได้กับ type="module")
+  function renderGroupSummary() {
+    if (groups.length === 0) { groupSummaryRow.innerHTML = ""; return; }
+    const chips = groups.map(g => {
+      const col   = COLORS[g.colorIdx % COLORS.length];
+      const names = g.playerIds
+        .map(id => players.find(p => p.id === id)?.name)
+        .filter(Boolean).join(", ");
+      return `<span class="group-summary-chip">
+        <span style="width:8px;height:8px;border-radius:50%;background:${col.dot};flex-shrink:0;display:inline-block"></span>
+        กลุ่ม ${col.label}: ${esc(names)}
+      </span>`;
+    }).join("");
+    groupSummaryRow.innerHTML = `<div class="group-summary-row">${chips}</div>`;
+  }
+
+  // [MODIFIED] Per-player group assign button replaces select-mode flow
+  function renderPlayerList(playerGroup) {
+    playerList.innerHTML = players.map((p, i) => {
+      const g   = playerGroup[p.id];
+      const col = g ? COLORS[g.colorIdx % COLORS.length] : null;
+
+      const groupUI = col
+        ? `<span class="group-chip" style="background:${col.bg};border-color:${col.border};color:${col.dot}">
+             <span class="group-chip-dot" style="background:${col.dot}"></span>
+             กลุ่ม ${col.label}
+             <button class="group-chip-x" data-action="chip" data-gid="${g.id}" data-pid="${p.id}" title="ยกเลิกกลุ่ม">✕</button>
+           </span>`
+        : `<button class="btn-group-assign" data-action="open-picker" data-pid="${p.id}">+ จัดกลุ่ม</button>`;
+
+      const pickerHtml = groupPickerPlayerId === p.id ? renderGroupPicker(p.id) : "";
+
+      return `<div class="player-item">
+        <span class="player-num">${i + 1}</span>
+        <span class="player-name">${esc(p.name)}</span>
+        ${groupUI}
+        <div class="player-actions">
+          <button class="btn-icon" data-action="edit" data-id="${p.id}">✏️</button>
+          <button class="btn-icon" data-action="del"  data-id="${p.id}">🗑️</button>
+        </div>
+        ${pickerHtml}
+      </div>`;
+    }).join("");
+  }
+
+  // [NEW] Inline dropdown for choosing a group
+  function renderGroupPicker(playerId) {
+    const groupOptions = groups.map(g => {
+      const col   = COLORS[g.colorIdx % COLORS.length];
+      const count = g.playerIds.filter(id => players.find(p => p.id === id)).length;
+      return `<button class="picker-option" data-action="assign-group" data-pid="${playerId}" data-gid="${g.id}">
+        <span style="width:9px;height:9px;border-radius:50%;background:${col.dot};flex-shrink:0;display:inline-block"></span>
+        กลุ่ม ${col.label}
+        <span style="color:var(--text-muted);font-size:.8em;margin-left:auto">${count} คน</span>
+      </button>`;
+    }).join("");
+
+    const usedColors = new Set(groups.map(g => g.colorIdx));
+    let nextColor = 0;
+    while (usedColors.has(nextColor) && nextColor < COLORS.length) nextColor++;
+    const createBtn = nextColor < COLORS.length
+      ? `<div class="picker-divider"></div>
+         <button class="picker-option picker-create" data-action="create-group" data-pid="${playerId}">
+           <span style="font-size:.95rem;line-height:1">＋</span>
+           สร้างกลุ่ม ${COLORS[nextColor].label} ใหม่
+         </button>`
+      : "";
+
+    return `<div class="group-picker">
+      <div class="picker-header">เลือกกลุ่ม</div>
+      ${groupOptions || '<div class="picker-empty">ยังไม่มีกลุ่ม</div>'}
+      ${createBtn}
+    </div>`;
+  }
+
+  // ── Event delegation ───────────────────────────────────────
   playerList.addEventListener("click", e => {
-    const btn = e.target.closest("[data-action]");
-    if (!btn) return;
-    if (btn.dataset.action === "edit") startEdit(btn.dataset.id);
-    if (btn.dataset.action === "del")  deletePlayer(btn.dataset.id);
+    const el = e.target.closest("[data-action]");
+    if (!el) return;
+    e.stopPropagation();
+    const { action, id, pid, gid } = el.dataset;
+    if (action === "edit")          startEdit(id);
+    if (action === "del")           deletePlayer(id);
+    if (action === "chip")          ungroupPlayer(pid, gid);
+    if (action === "open-picker")   openGroupPicker(pid);
+    if (action === "assign-group")  assignPlayerToGroup(pid, gid);
+    if (action === "create-group")  createGroupForPlayer(pid);
   });
+
+  // [NEW] Close picker when tapping outside
+  document.addEventListener("click", () => {
+    if (groupPickerPlayerId !== null) {
+      groupPickerPlayerId = null;
+      render();
+    }
+  });
+
+  // [NEW] Toggle group picker for a player
+  function openGroupPicker(playerId) {
+    groupPickerPlayerId = groupPickerPlayerId === playerId ? null : playerId;
+    render();
+  }
+
+  // [NEW] Remove a single player from their group; delete group doc if it becomes empty
+  async function ungroupPlayer(playerId, gid) {
+    const g = groups.find(g => g.id === gid);
+    if (!g) return;
+    const remaining = g.playerIds.filter(id => id !== playerId);
+    try {
+      if (remaining.length === 0) await deleteDoc(doc(db, "groups", gid));
+      else await updateDoc(doc(db, "groups", gid), { playerIds: remaining });
+    } catch { alert("ยกเลิกกลุ่มไม่สำเร็จ"); }
+  }
+
+  // [NEW] Assign player to an existing group
+  async function assignPlayerToGroup(playerId, targetGid) {
+    const currentGroup = groups.find(g => g.playerIds.includes(playerId));
+    const targetGroup  = groups.find(g => g.id === targetGid);
+    if (!targetGroup || targetGroup.playerIds.includes(playerId)) {
+      groupPickerPlayerId = null;
+      render();
+      return;
+    }
+    groupPickerPlayerId = null;
+    try {
+      const batch = writeBatch(db);
+      if (currentGroup && currentGroup.id !== targetGid) {
+        const remaining = currentGroup.playerIds.filter(id => id !== playerId);
+        if (remaining.length === 0) batch.delete(doc(db, "groups", currentGroup.id));
+        else batch.update(doc(db, "groups", currentGroup.id), { playerIds: remaining });
+      }
+      batch.update(doc(db, "groups", targetGid), {
+        playerIds: [...targetGroup.playerIds, playerId],
+      });
+      await batch.commit();
+    } catch { alert("จัดกลุ่มไม่สำเร็จ ลองใหม่"); }
+  }
+
+  // [NEW] Create a new group and assign this player to it
+  async function createGroupForPlayer(playerId) {
+    const usedColors = new Set(groups.map(g => g.colorIdx));
+    let colorIdx = 0;
+    while (usedColors.has(colorIdx) && colorIdx < COLORS.length) colorIdx++;
+    if (colorIdx >= COLORS.length) colorIdx = groups.length % COLORS.length;
+
+    const currentGroup = groups.find(g => g.playerIds.includes(playerId));
+    groupPickerPlayerId = null;
+    try {
+      const batch = writeBatch(db);
+      if (currentGroup) {
+        const remaining = currentGroup.playerIds.filter(id => id !== playerId);
+        if (remaining.length === 0) batch.delete(doc(db, "groups", currentGroup.id));
+        else batch.update(doc(db, "groups", currentGroup.id), { playerIds: remaining });
+      }
+      batch.set(doc(colG), { colorIdx, playerIds: [playerId], createdAt: serverTimestamp() });
+      await batch.commit();
+    } catch { alert("สร้างกลุ่มไม่สำเร็จ ลองใหม่"); }
+  }
 
   // ── Add ────────────────────────────────────────────────────
   async function addPlayer() {
@@ -676,67 +714,182 @@
 
   // ── Delete ─────────────────────────────────────────────────
   async function deletePlayer(id) {
-    try { await deleteDoc(doc(db, "players", id)); }
-    catch { alert("ลบไม่สำเร็จ ลองใหม่อีกครั้ง"); }
+    try {
+      const batch = writeBatch(db);
+      batch.delete(doc(db, "players", id));
+      for (const g of groups) {
+        if (!g.playerIds.includes(id)) continue;
+        const remaining = g.playerIds.filter(pid => pid !== id);
+        if (remaining.length === 0) batch.delete(doc(db, "groups", g.id));
+        else batch.update(doc(db, "groups", g.id), { playerIds: remaining });
+      }
+      await batch.commit();
+    } catch { alert("ลบไม่สำเร็จ ลองใหม่อีกครั้ง"); }
   }
 
-  // ── Random teams ───────────────────────────────────────────
+  // [FIXED] Random teams — balanced bin-packing with group-fit check and retry
   randomBtn.addEventListener("click", () => {
     if (!players.length) return;
-    const shuffled = [...players].sort(() => Math.random() - 0.5);
-    const buckets  = [[], [], []];
-    shuffled.forEach((p, i) => buckets[i % 3].push(p.name));
+
+    const N          = players.length;
+    const groupedIds = new Set(groups.flatMap(g => g.playerIds));
+
+    // Step 1: build units (groups as indivisible units + individual ungrouped players)
+    const allUnits = [
+      ...groups
+        .map(g => {
+          const col     = COLORS[g.colorIdx % COLORS.length];
+          const members = g.playerIds
+            .map(id => players.find(p => p.id === id)?.name)
+            .filter(Boolean);
+          if (!members.length) return null;
+          return { members, groupLabel: `กลุ่ม ${col.label}`, groupColor: col.dot };
+        })
+        .filter(Boolean),
+      ...players
+        .filter(p => !groupedIds.has(p.id))
+        .map(p => ({ members: [p.name], groupLabel: null, groupColor: null })),
+    ];
+
+    const bigUnit = allUnits.find(u => u.groupLabel && u.members.length > N / 2);
+
+    // [FIXED] Step 2: compute base target sizes — shuffled so any team can get the larger slot
+    const base        = Math.floor(N / 3);
+    const extra       = N % 3;
+    const baseTargets = [base + (extra > 0 ? 1 : 0), base + (extra > 1 ? 1 : 0), base];
+
+    function fisherYates(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // [FIXED] Step 3: greedy bin-packing — check group fits before assigning;
+    //   if no team can absorb the whole group, break it into individuals
+    function tryAssign(units, targets) {
+      const teamUnits = [[], [], []];
+      const teamSizes = [0, 0, 0];
+
+      for (const unit of units) {
+        if (unit.members.length > 1) {
+          // Find teams whose remaining capacity >= group size
+          const canFit = [0, 1, 2].filter(i => targets[i] - teamSizes[i] >= unit.members.length);
+          if (canFit.length > 0) {
+            // [FIXED] Pick the fitting team with the most remaining capacity
+            const best = canFit.reduce((mi, i) =>
+              (targets[i] - teamSizes[i]) > (targets[mi] - teamSizes[mi]) ? i : mi
+            );
+            teamUnits[best].push(unit);
+            teamSizes[best] += unit.members.length;
+          } else {
+            // [FIXED] No team can fit the whole group — split into individuals
+            for (const name of unit.members) {
+              const caps = targets.map((t, i) => t - teamSizes[i]);
+              const best = caps.reduce((mi, c, i) => c > caps[mi] ? i : mi, 0);
+              teamUnits[best].push({ members: [name], groupLabel: unit.groupLabel, groupColor: unit.groupColor });
+              teamSizes[best] += 1;
+            }
+          }
+        } else {
+          // Individual: team with most remaining capacity
+          const caps = targets.map((t, i) => t - teamSizes[i]);
+          const best = caps.reduce((mi, c, i) => c > caps[mi] ? i : mi, 0);
+          teamUnits[best].push(unit);
+          teamSizes[best] += 1;
+        }
+      }
+      return { teamUnits, teamSizes };
+    }
+
+    // [FIXED] Step 4: retry up to 10 times until max-min <= 1
+    let finalTeamUnits = null;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const units   = fisherYates([...allUnits]);
+      const targets = fisherYates([...baseTargets]);
+      const { teamUnits, teamSizes } = tryAssign(units, targets);
+      if (Math.max(...teamSizes) - Math.min(...teamSizes) <= 1) {
+        finalTeamUnits = teamUnits;
+        break;
+      }
+      if (attempt === 9) finalTeamUnits = teamUnits; // fallback: use last attempt
+    }
+
+    // Randomize which bucket gets which colour (red / yellow / blue)
     const order = [0, 1, 2].sort(() => Math.random() - 0.5);
-    const [red, yellow, blue] = [buckets[order[0]], buckets[order[1]], buckets[order[2]]];
-    teamResult = { red, yellow, blue };
+    teamResult = {
+      red:    finalTeamUnits[order[0]],
+      yellow: finalTeamUnits[order[1]],
+      blue:   finalTeamUnits[order[2]],
+      warning: bigUnit
+        ? `${bigUnit.groupLabel} มีสมาชิก ${bigUnit.members.length} คน (มากกว่าครึ่งของผู้เล่นทั้งหมด ${N} คน) — อาจทำให้ทีมไม่สมดุล`
+        : null,
+    };
     renderTeams();
     teamSection.scrollIntoView({ behavior: "smooth" });
   });
 
+  // [MODIFIED] Render teams with grouped-unit rows
   function renderTeams() {
     if (!teamResult) { teamSection.innerHTML = ""; return; }
-    const { red, yellow, blue } = teamResult;
+    const { red, yellow, blue, warning } = teamResult;
+    const warnHtml = warning
+      ? `<div class="team-warning">⚠️ ${esc(warning)}</div>`
+      : "";
     teamSection.innerHTML = `
       <div class="card">
+        ${warnHtml}
         <div class="section-label">ผลการแบ่งทีม</div>
         <div class="team-grid">
-          ${teamCard("🔴","RED",   "team-red",    red)}
-          ${teamCard("🟡","YELLOW","team-yellow", yellow)}
-          ${teamCard("🔵","BLUE",  "team-blue",   blue)}
+          ${teamCard("🔴","ทีมแดง",    "team-red",    red)}
+          ${teamCard("🟡","ทีมเหลือง", "team-yellow", yellow)}
+          ${teamCard("🔵","ทีมน้ำเงิน","team-blue",   blue)}
         </div>
         <div class="divider"></div>
         <button id="reshuffleBtn" class="btn btn-ghost" style="width:100%;font-size:.88rem">
           🔀 สุ่มใหม่อีกครั้ง
         </button>
       </div>`;
-    document.getElementById("reshuffleBtn").addEventListener("click",
-      () => randomBtn.click());
+    $("reshuffleBtn").addEventListener("click", () => randomBtn.click());
   }
 
-  function teamCard(emoji, label, cls, members) {
+  // [MODIFIED] Each row = one unit, showing comma-separated names + group tag
+  function teamCard(emoji, label, cls, unitList) {
+    const count = unitList.reduce((s, u) => s + u.members.length, 0);
+    const rows  = unitList.map(u => {
+      const names = u.members.map(n => esc(n)).join(", ");
+      const tag   = u.groupLabel
+        ? `<span class="team-group-tag" style="color:${u.groupColor};border-color:${u.groupColor}">${esc(u.groupLabel)}</span>`
+        : `<span class="team-group-tag no-group">ไม่มีกลุ่ม</span>`;
+      return `<li><span class="unit-names">${names}</span>${tag}</li>`;
+    }).join("");
     return `
       <div class="team-card ${cls}">
-        <div class="team-emoji">${emoji}</div>
-        <div class="team-name">${label}</div>
-        <span class="team-count-badge">${members.length} คน</span>
-        <ul class="team-members">${members.map(n => `<li>${esc(n)}</li>`).join("")}</ul>
+        <div class="team-card-header">
+          <span class="team-emoji">${emoji}</span>
+          <span class="team-name">${label}</span>
+          <span class="team-count-badge">${count} คน</span>
+        </div>
+        <ul class="team-members">${rows || '<li><span class="unit-names" style="color:var(--text-muted)">—</span></li>'}</ul>
       </div>`;
   }
 
-  // ── Clear ──────────────────────────────────────────────────
+  // ── Clear (also clears groups) ─────────────────────────────
   clearBtn.addEventListener("click", () => confirmModal.classList.add("open"));
   confirmNo.addEventListener("click", () => closeModal(confirmModal));
   confirmModal.addEventListener("click", e => { if (e.target === confirmModal) closeModal(confirmModal); });
 
   confirmYes.addEventListener("click", async () => {
     closeModal(confirmModal);
+    teamResult = null;
+    teamSection.innerHTML = "";
     try {
-      const snap  = await getDocs(col);
+      const [playerSnap, groupSnap] = await Promise.all([getDocs(col), getDocs(colG)]);
       const batch = writeBatch(db);
-      snap.forEach(d => batch.delete(d.ref));
+      playerSnap.forEach(d => batch.delete(d.ref));
+      groupSnap.forEach(d => batch.delete(d.ref));
       await batch.commit();
-      teamResult = null;
-      teamSection.innerHTML = "";
     } catch { alert("เคลียไม่สำเร็จ ลองใหม่อีกครั้ง"); }
   });
 
@@ -752,13 +905,12 @@
     clearTimeout(errorTimer);
     errorTimer = setTimeout(clearError, 3000);
   }
-  function clearError() { inputError.classList.remove("show"); clearTimeout(errorTimer); }
-
-  function showEditError(msg) { editError.textContent = "⚠️ " + msg; editError.classList.add("show"); }
-  function clearEditError()   { editError.classList.remove("show"); }
+  function clearError()      { inputError.classList.remove("show"); clearTimeout(errorTimer); }
+  function showEditError(msg){ editError.textContent = "⚠️ " + msg; editError.classList.add("show"); }
+  function clearEditError()  { editError.classList.remove("show"); }
 
   function esc(s) {
-    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   }
   function shake(el) {
     el.classList.add("shake");
