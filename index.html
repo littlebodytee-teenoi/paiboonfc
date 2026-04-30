@@ -349,7 +349,7 @@
       <span id="statusDot" class="status-dot connecting"></span>
       <span id="statusText" class="status-text">กำลังเชื่อมต่อ...</span>
     </div>
-    <div class="version-tag">v1.0.0<span class="version-hash">#b633e55</span></div>
+    <div class="version-tag">v1.0.1</span></div>
   </div>
 
   <!-- Input card -->
@@ -735,14 +735,14 @@
     } catch { alert("ลบไม่สำเร็จ ลองใหม่อีกครั้ง"); }
   }
 
-  // [FIXED] Random teams — balanced bin-packing with group-fit check and retry
+  // [FIXED - group integrity] Random teams — groups NEVER split across teams
   randomBtn.addEventListener("click", () => {
     if (!players.length) return;
 
     const N          = players.length;
     const groupedIds = new Set(groups.flatMap(g => g.playerIds));
 
-    // Step 1: build units (groups as indivisible units + individual ungrouped players)
+    // STEP 1: build units — groups as indivisible objects, ungrouped as solo
     const allUnits = [
       ...groups
         .map(g => {
@@ -751,21 +751,18 @@
             .map(id => players.find(p => p.id === id)?.name)
             .filter(Boolean);
           if (!members.length) return null;
-          return { members, groupLabel: `กลุ่ม ${col.label}`, groupColor: col.dot };
+          // type:'group' keeps all members together as one atomic unit
+          return { type: 'group', members, groupLabel: `กลุ่ม ${col.label}`, groupColor: col.dot };
         })
         .filter(Boolean),
       ...players
         .filter(p => !groupedIds.has(p.id))
-        .map(p => ({ members: [p.name], groupLabel: null, groupColor: null })),
+        .map(p => ({ type: 'solo', members: [p.name], groupLabel: null, groupColor: null })),
     ];
 
-    const bigUnit = allUnits.find(u => u.groupLabel && u.members.length > N / 2);
+    const bigUnit = allUnits.find(u => u.type === 'group' && u.members.length > N / 2);
 
-    // [FIXED] Step 2: compute base target sizes — shuffled so any team can get the larger slot
-    const base        = Math.floor(N / 3);
-    const extra       = N % 3;
-    const baseTargets = [base + (extra > 0 ? 1 : 0), base + (extra > 1 ? 1 : 0), base];
-
+    // STEP 2: Fisher-Yates shuffle (operates on unit objects, never on individual members)
     function fisherYates(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -774,34 +771,39 @@
       return arr;
     }
 
-    // [FIXED] Step 3: greedy bin-packing — check group fits before assigning;
-    //   if no team can absorb the whole group, break it into individuals
+    // STEP 3: target sizes per team, shuffled so no team always gets the bigger slot
+    const base        = Math.floor(N / 3);
+    const extra       = N % 3;
+    const baseTargets = [base + (extra > 0 ? 1 : 0), base + (extra > 1 ? 1 : 0), base];
+
+    // STEP 4: greedy bin-packing
     function tryAssign(units, targets) {
       const teamUnits = [[], [], []];
       const teamSizes = [0, 0, 0];
 
       for (const unit of units) {
-        if (unit.members.length > 1) {
-          // Find teams whose remaining capacity >= group size
-          const canFit = [0, 1, 2].filter(i => targets[i] - teamSizes[i] >= unit.members.length);
+        const size = unit.members.length;
+
+        if (unit.type === 'group') {
+          // [FIXED - group integrity] Find teams with enough room for the ENTIRE group
+          const canFit = [0, 1, 2].filter(i => targets[i] - teamSizes[i] >= size);
+          let best;
           if (canFit.length > 0) {
-            // [FIXED] Pick the fitting team with the most remaining capacity
-            const best = canFit.reduce((mi, i) =>
+            // Pick the fitting team with the most remaining capacity
+            best = canFit.reduce((mi, i) =>
               (targets[i] - teamSizes[i]) > (targets[mi] - teamSizes[mi]) ? i : mi
             );
-            teamUnits[best].push(unit);
-            teamSizes[best] += unit.members.length;
           } else {
-            // [FIXED] No team can fit the whole group — split into individuals
-            for (const name of unit.members) {
-              const caps = targets.map((t, i) => t - teamSizes[i]);
-              const best = caps.reduce((mi, c, i) => c > caps[mi] ? i : mi, 0);
-              teamUnits[best].push({ members: [name], groupLabel: unit.groupLabel, groupColor: unit.groupColor });
-              teamSizes[best] += 1;
-            }
+            // [FIXED - group integrity] No team has exact room — assign whole group to
+            // the team with the most remaining capacity. Allow overflow; NEVER split.
+            const caps = targets.map((t, i) => t - teamSizes[i]);
+            best = caps.reduce((mi, c, i) => c > caps[mi] ? i : mi, 0);
           }
+          teamUnits[best].push(unit);
+          teamSizes[best] += size;
+
         } else {
-          // Individual: team with most remaining capacity
+          // Solo player: team with most remaining capacity
           const caps = targets.map((t, i) => t - teamSizes[i]);
           const best = caps.reduce((mi, c, i) => c > caps[mi] ? i : mi, 0);
           teamUnits[best].push(unit);
@@ -811,25 +813,58 @@
       return { teamUnits, teamSizes };
     }
 
-    // [FIXED] Step 4: retry up to 10 times until max-min <= 1
+    // STEP 5: validate — group integrity is a hard requirement; balance is best-effort
+    function validateGroupIntegrity(teamUnits) {
+      const groupTeamMap = {};
+      teamUnits.forEach((units, teamIdx) => {
+        units.forEach(unit => {
+          if (!unit.groupLabel) return;
+          if (!groupTeamMap[unit.groupLabel]) groupTeamMap[unit.groupLabel] = new Set();
+          groupTeamMap[unit.groupLabel].add(teamIdx);
+        });
+      });
+      let ok = true;
+      for (const [label, teamSet] of Object.entries(groupTeamMap)) {
+        if (teamSet.size > 1) {
+          console.error(`[GROUP INTEGRITY VIOLATION] ${label} แตกกระจายไป ${teamSet.size} ทีม`, [...teamSet]);
+          ok = false;
+        }
+      }
+      return ok;
+    }
+
+    // Retry up to 10 times; accept first attempt that passes both integrity + balance
     let finalTeamUnits = null;
+    let finalTeamSizes = null;
     for (let attempt = 0; attempt < 10; attempt++) {
       const units   = fisherYates([...allUnits]);
       const targets = fisherYates([...baseTargets]);
       const { teamUnits, teamSizes } = tryAssign(units, targets);
-      if (Math.max(...teamSizes) - Math.min(...teamSizes) <= 1) {
-        finalTeamUnits = teamUnits;
-        break;
-      }
-      if (attempt === 9) finalTeamUnits = teamUnits; // fallback: use last attempt
+      const balanced  = Math.max(...teamSizes) - Math.min(...teamSizes) <= 1;
+      const integrity = validateGroupIntegrity(teamUnits);
+      if (integrity && balanced) { finalTeamUnits = teamUnits; finalTeamSizes = teamSizes; break; }
+      // Keep the last attempt as fallback (integrity always holds; balance may not)
+      if (attempt === 9) { finalTeamUnits = teamUnits; finalTeamSizes = teamSizes; }
     }
 
-    // Randomize which bucket gets which colour (red / yellow / blue)
+    // Randomize which bucket maps to which colour
     const order = [0, 1, 2].sort(() => Math.random() - 0.5);
-    teamResult = {
+    const namedTeams = {
       red:    finalTeamUnits[order[0]],
       yellow: finalTeamUnits[order[1]],
       blue:   finalTeamUnits[order[2]],
+    };
+
+    // Debug output — inspect in DevTools to verify group integrity
+    console.log('=== TEAM RESULT ===', {
+      red:    namedTeams.red.map(u => ({ group: u.groupLabel || 'solo', members: u.members })),
+      yellow: namedTeams.yellow.map(u => ({ group: u.groupLabel || 'solo', members: u.members })),
+      blue:   namedTeams.blue.map(u => ({ group: u.groupLabel || 'solo', members: u.members })),
+      sizes:  { red: namedTeams.red.reduce((s,u)=>s+u.members.length,0), yellow: namedTeams.yellow.reduce((s,u)=>s+u.members.length,0), blue: namedTeams.blue.reduce((s,u)=>s+u.members.length,0) },
+    });
+
+    teamResult = {
+      ...namedTeams,
       warning: bigUnit
         ? `${bigUnit.groupLabel} มีสมาชิก ${bigUnit.members.length} คน (มากกว่าครึ่งของผู้เล่นทั้งหมด ${N} คน) — อาจทำให้ทีมไม่สมดุล`
         : null,
